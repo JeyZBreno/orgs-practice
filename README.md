@@ -1,2 +1,2 @@
 # orgs-practice
-Thhis repository  was created to pratice android development using kotlin.
+This repository  was created to practice android development using kotlin.
