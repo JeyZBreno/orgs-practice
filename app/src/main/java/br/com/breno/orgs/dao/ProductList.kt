@@ -1,6 +1,7 @@
 package br.com.breno.orgs.dao
 
 import br.com.breno.orgs.model.Product
+import java.math.BigDecimal
 
 class ProductList {
 
@@ -13,6 +14,12 @@ class ProductList {
     }
 
     companion object {
-        private val products = mutableListOf<Product>()
+        private val products = mutableListOf<Product>(
+            Product(
+                name = "Salada de Frutas",
+                description = "Laranja, Uva e Maça",
+                value = BigDecimal("15.0")
+            )
+        )
     }
 }

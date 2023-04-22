@@ -4,8 +4,10 @@ import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import br.com.breno.orgs.R
 import br.com.breno.orgs.dao.ProductList
 import br.com.breno.orgs.databinding.ActivityProductListBinding
 import br.com.breno.orgs.ui.recyclerview.adapter.ProductListAdapter

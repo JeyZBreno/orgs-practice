@@ -2,10 +2,16 @@ package br.com.breno.orgs.ui.recyclerview.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import br.com.breno.orgs.R
 import br.com.breno.orgs.databinding.ProdutoItemBinding
+import br.com.breno.orgs.extensions.tryLoadImage
 import br.com.breno.orgs.model.Product
+import java.math.BigDecimal
+import java.text.NumberFormat
+import java.util.Locale
 
 class ProductListAdapter(
     private val context: Context,
@@ -14,7 +20,7 @@ class ProductListAdapter(
 
     private val products = products.toMutableList()
 
-    class ViewHolder(binding: ProdutoItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(private val binding: ProdutoItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         private val name = binding.nome
         private val description = binding.descricao
@@ -23,8 +29,21 @@ class ProductListAdapter(
         fun vincula(product: Product) {
             name.text = product.name
             description.text = product.description
-            value.text = product.value.toPlainString()
+            value.text = formatToBrazilCurrency(product.value)
+            binding.imageView.tryLoadImage(product.image)
+
+            /** This commited code set the visibility for the image. **/
+            val visibility = if(!product.image.isNullOrBlank()) View.VISIBLE else View.GONE
+
+            binding.imageView.visibility = visibility
+
         }
+
+        private fun formatToBrazilCurrency(value: BigDecimal): String =
+            NumberFormat
+                .getCurrencyInstance(
+                    Locale("pt", "br")
+                ).format(value)
     }
 
     override fun onCreateViewHolder(
