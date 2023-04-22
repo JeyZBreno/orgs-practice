@@ -19,7 +19,7 @@ class ProductFormActivity : AppCompatActivity(R.layout.activity_product_form) {
         saveButtonConfig()
         switchImageConfig()
         setContentView(binding.root)
-
+        title = "Cadastrar produto"
     }
 
     private var url: String? = null
