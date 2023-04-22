@@ -3,35 +3,38 @@ package br.com.breno.orgs.ui.dialog
 import android.content.Context
 import android.view.LayoutInflater
 import androidx.appcompat.app.AlertDialog
-import br.com.breno.orgs.R
 import br.com.breno.orgs.databinding.ImageFormBinding
-import coil.load
+import br.com.breno.orgs.extensions.tryLoadImage
 
 class ImageFormDialog(
     private val context: Context,
 ) {
+    fun showThem(
+        urlDefault: String? = null,
+        loadedImage: (image: String) -> Unit,
+    ) {
+        ImageFormBinding
+            .inflate(LayoutInflater.from(context)).apply {
+                urlDefault?.let { url ->
+                    imageChanged.tryLoadImage(url)
+                    imageUrl.setText(url)
+                }
 
-    fun showThem(loadedImage: (image: String) -> Unit) {
-        val binding = ImageFormBinding
-            .inflate(LayoutInflater.from(context))
+                reloadButton.setOnClickListener {
+                    val url = imageUrl.text.toString()
+                    imageChanged.tryLoadImage(url)
+                }
 
-        binding.reloadButton.setOnClickListener {
-            val url = binding.imageUrl.text.toString()
-            binding.imageChanged.load(url) {
-                placeholder(R.drawable.placeholder)
+                AlertDialog.Builder(context)
+                    .setView(root)
+                    .setPositiveButton("Confirmar") { _, _ ->
+                        val url = imageUrl.text.toString()
+                        loadedImage(url)
+                    }
+                    .setNegativeButton("Cancelar") { _, _ ->
+
+                    }
+                    .show()
             }
-        }
-
-        AlertDialog.Builder(context)
-            .setView(binding.root)
-            .setPositiveButton("Confirmar") { _, _ ->
-                val url = binding.imageUrl.text.toString()
-                loadedImage(url)
-
-            }
-            .setNegativeButton("Cancelar") { _, _ ->
-
-            }
-            .show()
     }
 }

@@ -28,10 +28,11 @@ class ProductFormActivity : AppCompatActivity(R.layout.activity_product_form) {
         val switchImage = binding.chosenImage
 
         switchImage.setOnClickListener {
-            ImageFormDialog(this).showThem { image ->
-                url = image
-                binding.chosenImage.tryLoadImage(url)
-            }
+            ImageFormDialog(this)
+                .showThem(urlDefault = url) { image ->
+                    url = image
+                    binding.chosenImage.tryLoadImage(url)
+                }
 
         }
     }
