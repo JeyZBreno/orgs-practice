@@ -4,13 +4,12 @@ import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import br.com.breno.orgs.R
 import br.com.breno.orgs.dao.ProductList
 import br.com.breno.orgs.databinding.ActivityProductListBinding
 import br.com.breno.orgs.ui.recyclerview.adapter.ProductListAdapter
+import br.com.breno.orgs.utils.KEY_PRODUCT
 
 class ProductListActivity : AppCompatActivity() {
 
@@ -51,6 +50,11 @@ class ProductListActivity : AppCompatActivity() {
         Log.i("MainActivity", "onResume: ${dao.findAll()}")
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
+        adapter.whenClickOnItem = {
+            val intent = Intent(this, ProductDetailActivity::class.java).apply{
+                putExtra(KEY_PRODUCT, it)
+            }
+            startActivity(intent)
+        }
     }
-
 }
