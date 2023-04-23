@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import br.com.breno.orgs.R
 import br.com.breno.orgs.databinding.ProdutoItemBinding
 import br.com.breno.orgs.extensions.tryLoadImage
 import br.com.breno.orgs.model.Product
@@ -16,17 +15,27 @@ import java.util.Locale
 class ProductListAdapter(
     private val context: Context,
     products: List<Product>,
+    var whenClickOnItem: (product: Product) -> Unit = {},
 ) : RecyclerView.Adapter<ProductListAdapter.ViewHolder>() {
-
     private val products = products.toMutableList()
 
-    class ViewHolder(private val binding: ProdutoItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: ProdutoItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         private val name = binding.nome
         private val description = binding.descricao
         private val value = binding.valor
 
+        private lateinit var product: Product
+
+        init {
+            itemView.setOnClickListener {
+                if (::product.isInitialized)
+                    whenClickOnItem(product)
+            }
+        }
+
         fun vincula(product: Product) {
+            this.product = product
             name.text = product.name
             description.text = product.description
             value.text = formatToBrazilCurrency(product.value)
