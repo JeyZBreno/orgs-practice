@@ -3,10 +3,9 @@ package br.com.breno.orgs.ui.activity
 import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import br.com.breno.orgs.dao.ProductList
+import br.com.breno.orgs.database.OrgsDatabase
 import br.com.breno.orgs.databinding.ActivityProductListBinding
 import br.com.breno.orgs.ui.recyclerview.adapter.ProductListAdapter
 import br.com.breno.orgs.utils.KEY_PRODUCT
@@ -15,10 +14,8 @@ class ProductListActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityProductListBinding.inflate(layoutInflater) }
 
-    private val dao = ProductList()
     private val adapter = ProductListAdapter(
         context = this,
-        products = dao.findAll(),
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +27,10 @@ class ProductListActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        adapter.update(dao.findAll())
+        floatingActionButtonConfig()
+        val orgsDb = OrgsDatabase.getInstance(this)
+        val productDao = orgsDb.productDao()
+        adapter.update(productDao.findAll())
     }
 
     private fun floatingActionButtonConfig() {
@@ -47,14 +47,13 @@ class ProductListActivity : AppCompatActivity() {
 
     private fun recyclerViewConfig() {
         val recyclerView = binding.recyclerView
-        Log.i("MainActivity", "onResume: ${dao.findAll()}")
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
         adapter.whenClickOnItem = {
             val intent = Intent(this, ProductDetailActivity::class.java).apply{
                 putExtra(KEY_PRODUCT, it)
             }
-            startActivity(intent)
+            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
         }
     }
 }
