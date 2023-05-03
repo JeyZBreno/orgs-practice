@@ -21,4 +21,7 @@ interface ProductDao {
 
     @Delete
     fun deleteItem(vararg product: Product)
+
+    @Query("SELECT * FROM Product WHERE id = :id")
+    fun findById(id: Long) : Product?
 }

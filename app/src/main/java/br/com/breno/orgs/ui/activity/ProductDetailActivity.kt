@@ -1,6 +1,5 @@
 package br.com.breno.orgs.ui.activity
 
-import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -14,15 +13,31 @@ import br.com.breno.orgs.extensions.tryLoadImage
 import br.com.breno.orgs.model.Product
 import br.com.breno.orgs.utils.KEY_PRODUCT
 
-class ProductDetailActivity: AppCompatActivity() {
+class ProductDetailActivity : AppCompatActivity() {
 
-    private lateinit var product: Product
+    private var productId: Long? = null
+    private var product: Product? = null
     private val binding by lazy { ActivityProductDetailBinding.inflate(layoutInflater) }
+    private val productDao by lazy {
+        OrgsDatabase
+            .getInstance(this)
+            .productDao()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         tryLoadProduct()
         setContentView(binding.root)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        productId?.let { id ->
+            product = productDao.findById(id)
+        }
+        product?.let { product ->
+            fillFields(product)
+        } ?: finish()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -31,20 +46,19 @@ class ProductDetailActivity: AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if(::product.isInitialized) {
-            val db = OrgsDatabase.getInstance(this)
-            val productDao = db.productDao()
-            when(item.itemId) {
-                R.id.menu_product_detail_edit -> {
-                    Intent(this, ProductFormActivity::class.java).apply {
-                        putExtra(KEY_PRODUCT, product)
-                        startActivity(this)
-                    }
+        when (item.itemId) {
+            R.id.menu_product_detail_edit -> {
+                Intent(this, ProductFormActivity::class.java).apply {
+                    putExtra(KEY_PRODUCT, product)
+                    startActivity(this)
                 }
-                R.id.menu_product_detail_delete -> {
+            }
+
+            R.id.menu_product_detail_delete -> {
+                product?.let { product ->
                     productDao.deleteItem(product)
-                    finish()
                 }
+                finish()
             }
         }
         return super.onOptionsItemSelected(item)
@@ -52,13 +66,11 @@ class ProductDetailActivity: AppCompatActivity() {
 
     private fun tryLoadProduct() {
         intent.getParcelableExtra<Product>(KEY_PRODUCT)?.let { loadedProduct ->
-            product = loadedProduct
-            fillFields(loadedProduct)
+            productId = loadedProduct.id
         } ?: finish()
-
     }
 
-    private fun fillFields( loadedProduct: Product) {
+    private fun fillFields(loadedProduct: Product) {
         with(binding) {
             contentImage.tryLoadImage(loadedProduct.image)
             detailName.text = loadedProduct.name
