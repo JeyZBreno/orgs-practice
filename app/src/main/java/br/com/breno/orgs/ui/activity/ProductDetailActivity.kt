@@ -11,11 +11,11 @@ import br.com.breno.orgs.databinding.ActivityProductDetailBinding
 import br.com.breno.orgs.extensions.formatToBrazilCurrency
 import br.com.breno.orgs.extensions.tryLoadImage
 import br.com.breno.orgs.model.Product
-import br.com.breno.orgs.utils.KEY_PRODUCT
+import br.com.breno.orgs.utils.PRODUCT_KEY_ID
 
 class ProductDetailActivity : AppCompatActivity() {
 
-    private var productId: Long? = null
+    private var productId: Long = 0L
     private var product: Product? = null
     private val binding by lazy { ActivityProductDetailBinding.inflate(layoutInflater) }
     private val productDao by lazy {
@@ -32,9 +32,11 @@ class ProductDetailActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        productId?.let { id ->
-            product = productDao.findById(id)
-        }
+        findByProduct()
+    }
+
+    private fun findByProduct() {
+        product = productDao.findById(productId)
         product?.let { product ->
             fillFields(product)
         } ?: finish()
@@ -49,7 +51,7 @@ class ProductDetailActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.menu_product_detail_edit -> {
                 Intent(this, ProductFormActivity::class.java).apply {
-                    putExtra(KEY_PRODUCT, product)
+                    putExtra(PRODUCT_KEY_ID, productId)
                     startActivity(this)
                 }
             }
@@ -65,9 +67,7 @@ class ProductDetailActivity : AppCompatActivity() {
     }
 
     private fun tryLoadProduct() {
-        intent.getParcelableExtra<Product>(KEY_PRODUCT)?.let { loadedProduct ->
-            productId = loadedProduct.id
-        } ?: finish()
+        productId = intent.getLongExtra(PRODUCT_KEY_ID, 0L)
     }
 
     private fun fillFields(loadedProduct: Product) {

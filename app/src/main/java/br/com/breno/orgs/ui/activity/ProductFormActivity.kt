@@ -8,12 +8,17 @@ import br.com.breno.orgs.databinding.ActivityProductFormBinding
 import br.com.breno.orgs.extensions.tryLoadImage
 import br.com.breno.orgs.model.Product
 import br.com.breno.orgs.ui.dialog.ImageFormDialog
-import br.com.breno.orgs.utils.KEY_PRODUCT
+import br.com.breno.orgs.utils.PRODUCT_KEY_ID
 import java.math.BigDecimal
 
 class ProductFormActivity : AppCompatActivity(R.layout.activity_product_form) {
 
     private val binding by lazy { ActivityProductFormBinding.inflate(layoutInflater) }
+    private val productDao by lazy {
+        OrgsDatabase
+            .getInstance(this)
+            .productDao()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,6 +27,17 @@ class ProductFormActivity : AppCompatActivity(R.layout.activity_product_form) {
         setContentView(binding.root)
         title = "Cadastrar produto"
         tryLoadProduct()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        findByProduct()
+    }
+
+    private fun findByProduct() {
+        productDao.findById(productId)?.let { product ->
+            fillFields(product)
+        }
     }
 
     private var url: String? = null
@@ -36,20 +52,14 @@ class ProductFormActivity : AppCompatActivity(R.layout.activity_product_form) {
                     url = image
                     binding.chosenImage.tryLoadImage(url)
                 }
-
         }
     }
 
     private fun saveButtonConfig() {
         val saveButton = binding.saveButton
-        val orgsDb = OrgsDatabase.getInstance(this)
-        val productDao = orgsDb.productDao()
         saveButton.setOnClickListener {
             val newProduct = createProduct()
-            if(productId > 0)
-                productDao.updateItem(newProduct)
-            else
-                productDao.save(newProduct)
+            productDao.save(newProduct)
             finish()
         }
     }
@@ -73,16 +83,17 @@ class ProductFormActivity : AppCompatActivity(R.layout.activity_product_form) {
     }
 
     private fun tryLoadProduct() {
-        intent.getParcelableExtra<Product>(KEY_PRODUCT)?.let { loadedProduct ->
-            title = "Editar produto"
-            productId = loadedProduct.id
-            url = loadedProduct.image
-            with(binding) {
-                chosenImage.tryLoadImage(loadedProduct.image)
-                inputName.setText(loadedProduct.name)
-                inputDescription.setText(loadedProduct.description)
-                inputValue.setText(loadedProduct.value.toPlainString())
-            }
+        productId = intent.getLongExtra(PRODUCT_KEY_ID, 0L)
+    }
+
+    private fun fillFields(product: Product) {
+        title = "Editar produto"
+        url = product.image
+        with(binding) {
+            chosenImage.tryLoadImage(product.image)
+            inputName.setText(product.name)
+            inputDescription.setText(product.description)
+            inputValue.setText(product.value.toPlainString())
         }
     }
 }

@@ -1,3 +1,3 @@
 package br.com.breno.orgs.utils
 
-const val KEY_PRODUCT = "product"
+const val PRODUCT_KEY_ID = "PRODUCT_ID"

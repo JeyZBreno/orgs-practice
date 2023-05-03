@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import br.com.breno.orgs.database.OrgsDatabase
 import br.com.breno.orgs.databinding.ActivityProductListBinding
 import br.com.breno.orgs.ui.recyclerview.adapter.ProductListAdapter
-import br.com.breno.orgs.utils.KEY_PRODUCT
+import br.com.breno.orgs.utils.PRODUCT_KEY_ID
 
 class ProductListActivity : AppCompatActivity() {
 
@@ -49,9 +49,9 @@ class ProductListActivity : AppCompatActivity() {
         val recyclerView = binding.recyclerView
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
-        adapter.whenClickOnItem = {
+        adapter.whenClickOnItem = { product ->
             val intent = Intent(this, ProductDetailActivity::class.java).apply{
-                putExtra(KEY_PRODUCT, it)
+                putExtra(PRODUCT_KEY_ID, product.id)
             }
             startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
         }
