@@ -23,8 +23,7 @@ abstract class OrgsDatabase : RoomDatabase() {
                 context = context,
                 klass = OrgsDatabase::class.java,
                 name = "orgs.db"
-            ).allowMainThreadQueries()
-                .build()
+            ).build()
         }
     }
 }

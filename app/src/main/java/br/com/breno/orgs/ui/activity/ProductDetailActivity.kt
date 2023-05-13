@@ -12,6 +12,10 @@ import br.com.breno.orgs.extensions.formatToBrazilCurrency
 import br.com.breno.orgs.extensions.tryLoadImage
 import br.com.breno.orgs.model.Product
 import br.com.breno.orgs.utils.PRODUCT_KEY_ID
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ProductDetailActivity : AppCompatActivity() {
 
@@ -23,6 +27,7 @@ class ProductDetailActivity : AppCompatActivity() {
             .getInstance(this)
             .productDao()
     }
+    private val scope = CoroutineScope(Dispatchers.IO)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,10 +41,14 @@ class ProductDetailActivity : AppCompatActivity() {
     }
 
     private fun findByProduct() {
-        product = productDao.findById(productId)
-        product?.let { product ->
-            fillFields(product)
-        } ?: finish()
+        scope.launch {
+            product = productDao.findById(productId)
+            withContext(Dispatchers.Main) {
+                product?.let { product ->
+                    fillFields(product)
+                } ?: finish()
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -57,10 +66,12 @@ class ProductDetailActivity : AppCompatActivity() {
             }
 
             R.id.menu_product_detail_delete -> {
-                product?.let { product ->
-                    productDao.deleteItem(product)
+                scope.launch {
+                    product?.let { product ->
+                        productDao.deleteItem(product)
+                    }
+                    finish()
                 }
-                finish()
             }
         }
         return super.onOptionsItemSelected(item)

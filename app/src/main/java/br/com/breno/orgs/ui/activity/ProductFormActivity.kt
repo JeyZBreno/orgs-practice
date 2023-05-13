@@ -10,6 +10,11 @@ import br.com.breno.orgs.model.Product
 import br.com.breno.orgs.ui.dialog.ImageFormDialog
 import br.com.breno.orgs.utils.PRODUCT_KEY_ID
 import java.math.BigDecimal
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ProductFormActivity : AppCompatActivity(R.layout.activity_product_form) {
 
@@ -19,6 +24,7 @@ class ProductFormActivity : AppCompatActivity(R.layout.activity_product_form) {
             .getInstance(this)
             .productDao()
     }
+    private val scope = CoroutineScope(Dispatchers.IO)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,8 +41,12 @@ class ProductFormActivity : AppCompatActivity(R.layout.activity_product_form) {
     }
 
     private fun findByProduct() {
-        productDao.findById(productId)?.let { product ->
-            fillFields(product)
+        scope.launch {
+            productDao.findById(productId)?.let { product ->
+                withContext(Dispatchers.Main) {
+                    fillFields(product)
+                }
+            }
         }
     }
 
@@ -59,8 +69,10 @@ class ProductFormActivity : AppCompatActivity(R.layout.activity_product_form) {
         val saveButton = binding.saveButton
         saveButton.setOnClickListener {
             val newProduct = createProduct()
-            productDao.save(newProduct)
-            finish()
+            scope.launch {
+                productDao.save(newProduct)
+                finish()
+            }
         }
     }
 
