@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import br.com.breno.orgs.R
 import br.com.breno.orgs.database.OrgsDatabase
 import br.com.breno.orgs.databinding.ActivityProductDetailBinding
@@ -27,7 +28,6 @@ class ProductDetailActivity : AppCompatActivity() {
             .getInstance(this)
             .productDao()
     }
-    private val scope = CoroutineScope(Dispatchers.IO)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +41,7 @@ class ProductDetailActivity : AppCompatActivity() {
     }
 
     private fun findByProduct() {
-        scope.launch {
+        lifecycleScope.launch {
             product = productDao.findById(productId)
             withContext(Dispatchers.Main) {
                 product?.let { product ->
@@ -66,7 +66,7 @@ class ProductDetailActivity : AppCompatActivity() {
             }
 
             R.id.menu_product_detail_delete -> {
-                scope.launch {
+                lifecycleScope.launch {
                     product?.let { product ->
                         productDao.deleteItem(product)
                     }

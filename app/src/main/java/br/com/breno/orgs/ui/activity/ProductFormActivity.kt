@@ -2,6 +2,7 @@ package br.com.breno.orgs.ui.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import br.com.breno.orgs.R
 import br.com.breno.orgs.database.OrgsDatabase
 import br.com.breno.orgs.databinding.ActivityProductFormBinding
@@ -24,7 +25,6 @@ class ProductFormActivity : AppCompatActivity(R.layout.activity_product_form) {
             .getInstance(this)
             .productDao()
     }
-    private val scope = CoroutineScope(Dispatchers.IO)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +41,7 @@ class ProductFormActivity : AppCompatActivity(R.layout.activity_product_form) {
     }
 
     private fun findByProduct() {
-        scope.launch {
+        lifecycleScope.launch {
             productDao.findById(productId)?.let { product ->
                 withContext(Dispatchers.Main) {
                     fillFields(product)
@@ -69,7 +69,7 @@ class ProductFormActivity : AppCompatActivity(R.layout.activity_product_form) {
         val saveButton = binding.saveButton
         saveButton.setOnClickListener {
             val newProduct = createProduct()
-            scope.launch {
+            lifecycleScope.launch {
                 productDao.save(newProduct)
                 finish()
             }

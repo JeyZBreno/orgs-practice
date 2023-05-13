@@ -30,8 +30,6 @@ class ProductListActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityProductListBinding.inflate(layoutInflater) }
     private val productDao by lazy { OrgsDatabase.getInstance(this).productDao() }
-    private val job = Job()
-
     private val adapter = ProductListAdapter(
         context = this,
     )
@@ -45,16 +43,7 @@ class ProductListActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        //It get some exception initialized on coroutine scope
-        val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
-            Log.i(TAG, "onResume: throwable $throwable")
-            Toast.makeText(
-                this@ProductListActivity,
-                "Rolou um errinho de leve",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-        lifecycleScope.launch(exceptionHandler) {
+        lifecycleScope.launch() {
             val allProducts = productDao.findAll()
             adapter.update(allProducts)
         }
@@ -67,31 +56,29 @@ class ProductListActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         lifecycleScope.launch {
-            val orderedProducts = withContext(Dispatchers.IO) {
-                when (item.itemId) {
-                    R.id.menu_lista_produtos_ordenar_nome_asc ->
-                        productDao.findAllOrderedByNameAsc()
+            val orderedProducts: List<Product>? = when (item.itemId) {
+                R.id.menu_lista_produtos_ordenar_nome_asc ->
+                    productDao.findAllOrderedByNameAsc()
 
-                    R.id.menu_lista_produtos_ordenar_nome_desc ->
-                        productDao.findAllOrderedByNameDesc()
+                R.id.menu_lista_produtos_ordenar_nome_desc ->
+                    productDao.findAllOrderedByNameDesc()
 
-                    R.id.menu_lista_produtos_ordenar_descricao_asc ->
-                        productDao.findAllOrderedByDescriptionAsc()
+                R.id.menu_lista_produtos_ordenar_descricao_asc ->
+                    productDao.findAllOrderedByDescriptionAsc()
 
-                    R.id.menu_lista_produtos_ordenar_descricao_desc ->
-                        productDao.findAllOrderedByDescriptionDesc()
+                R.id.menu_lista_produtos_ordenar_descricao_desc ->
+                    productDao.findAllOrderedByDescriptionDesc()
 
-                    R.id.menu_lista_produtos_ordenar_valor_asc ->
-                        productDao.findAllOrderedByValueAsc()
+                R.id.menu_lista_produtos_ordenar_valor_asc ->
+                    productDao.findAllOrderedByValueAsc()
 
-                    R.id.menu_lista_produtos_ordenar_valor_desc ->
-                        productDao.findAllOrderedByValueDesc()
+                R.id.menu_lista_produtos_ordenar_valor_desc ->
+                    productDao.findAllOrderedByValueDesc()
 
-                    R.id.menu_lista_produtos_ordenar_sem_ordem ->
-                        productDao.findAll()
+                R.id.menu_lista_produtos_ordenar_sem_ordem ->
+                    productDao.findAll()
 
-                    else -> null
-                }
+                else -> null
             }
             orderedProducts?.let { products ->
                 adapter.update(products)
