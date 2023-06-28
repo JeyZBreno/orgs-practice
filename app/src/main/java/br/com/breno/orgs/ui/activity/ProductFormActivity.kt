@@ -33,18 +33,14 @@ class ProductFormActivity : AppCompatActivity(R.layout.activity_product_form) {
         setContentView(binding.root)
         title = "Cadastrar produto"
         tryLoadProduct()
-    }
-
-    override fun onResume() {
-        super.onResume()
         findByProduct()
     }
 
     private fun findByProduct() {
         lifecycleScope.launch {
-            productDao.findById(productId)?.let { product ->
-                withContext(Dispatchers.Main) {
-                    fillFields(product)
+            productDao.findById(productId).collect { product ->
+                product?.let { foundProduct ->
+                    fillFields(foundProduct)
                 }
             }
         }

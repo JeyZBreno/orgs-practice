@@ -21,6 +21,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -38,16 +41,14 @@ class ProductListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         recyclerViewConfig()
         floatingActionButtonConfig()
+        lifecycleScope.launch() {
+            productDao.findAll().collect { allProducts ->
+                adapter.update(allProducts)
+            }
+        }
         setContentView(binding.root)
     }
 
-    override fun onResume() {
-        super.onResume()
-        lifecycleScope.launch() {
-            val allProducts = productDao.findAll()
-            adapter.update(allProducts)
-        }
-    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_product_list, menu)
@@ -74,9 +75,6 @@ class ProductListActivity : AppCompatActivity() {
 
                 R.id.menu_lista_produtos_ordenar_valor_desc ->
                     productDao.findAllOrderedByValueDesc()
-
-                R.id.menu_lista_produtos_ordenar_sem_ordem ->
-                    productDao.findAll()
 
                 else -> null
             }

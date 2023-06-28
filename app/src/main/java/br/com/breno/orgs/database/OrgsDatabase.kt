@@ -16,14 +16,16 @@ abstract class OrgsDatabase : RoomDatabase() {
 
     companion object {
 
-        private lateinit var db: OrgsDatabase
+        @Volatile private var db: OrgsDatabase? = null
         fun getInstance(context: Context): OrgsDatabase {
-            if (::db.isInitialized) return db
-            return Room.databaseBuilder(
+            return db ?: Room.databaseBuilder(
                 context = context,
                 klass = OrgsDatabase::class.java,
                 name = "orgs.db"
             ).build()
+                .also {
+                    db = it
+                }
         }
     }
 }

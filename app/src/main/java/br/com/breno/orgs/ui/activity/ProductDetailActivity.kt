@@ -42,8 +42,8 @@ class ProductDetailActivity : AppCompatActivity() {
 
     private fun findByProduct() {
         lifecycleScope.launch {
-            product = productDao.findById(productId)
-            withContext(Dispatchers.Main) {
+            productDao.findById(productId).collect {foundProduct ->
+                product = foundProduct
                 product?.let { product ->
                     fillFields(product)
                 } ?: finish()
