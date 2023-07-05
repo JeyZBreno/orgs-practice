@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Orgs</string>
+    <string name="user_label">Usuário</string>
+    <string name="hint_name">Nome</string>
+    <string name="password_hint">Senha</string>
+    <string name="register_hint">Cadastrar</string>
+    <string name="orgs_label">Orgs</string>
+    <string name="user_hint">Usuário</string>
+    <string name="enter_label">Entrar</string>
+    <string name="register_user_label">cadastrar usuário</string>
 </resources>
