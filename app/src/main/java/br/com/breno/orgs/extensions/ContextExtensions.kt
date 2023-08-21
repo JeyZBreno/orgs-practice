@@ -4,12 +4,12 @@ import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 
-fun Context.parseTo(
+fun Context.goTo(
     clazz: Class<*>,
     intent: Intent.() -> Unit = {}
 ) {
     Intent(this, clazz).apply {
-        Intent()
+        intent()
         startActivity(this)
     }
 }

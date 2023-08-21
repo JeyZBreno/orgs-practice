@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.lifecycleScope
 import br.com.breno.orgs.database.OrgsDatabase
-import br.com.breno.orgs.extensions.parseTo
+import br.com.breno.orgs.extensions.goTo
 import br.com.breno.orgs.model.User
 import br.com.breno.orgs.utils.preferences.dataStore
 import br.com.breno.orgs.utils.preferences.loggedUserPreferences
@@ -52,7 +52,7 @@ abstract class BaseUserActivity : AppCompatActivity() {
     }
 
     private fun gotToLogin() {
-        parseTo(LoginActivity::class.java) {
+        goTo(LoginActivity::class.java) {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
         finish()

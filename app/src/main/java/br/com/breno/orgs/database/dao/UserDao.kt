@@ -10,10 +10,10 @@ import kotlinx.coroutines.flow.Flow
 interface UserDao {
 
     @Insert
-    suspend fun saveUser(User: User)
+    suspend fun saveUser(user: User)
 
     @Query("""
-        SELECT * FROM User
+        SELECT * FROM user
         WHERE id = :id
         AND password = :password
     """)
@@ -22,6 +22,6 @@ interface UserDao {
         password:String,
     ): User?
 
-    @Query("SELECT * FROM User Where id = :id")
+    @Query("SELECT * FROM user Where id = :id")
     fun findById(id: String): Flow<User>
 }

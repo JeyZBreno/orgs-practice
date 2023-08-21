@@ -7,7 +7,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.lifecycleScope
 import br.com.breno.orgs.database.OrgsDatabase
 import br.com.breno.orgs.databinding.ActivityLoginBinding
-import br.com.breno.orgs.extensions.parseTo
+import br.com.breno.orgs.extensions.goTo
 import br.com.breno.orgs.extensions.toast
 import br.com.breno.orgs.utils.preferences.dataStore
 import br.com.breno.orgs.utils.preferences.loggedUserPreferences
@@ -45,7 +45,7 @@ class LoginActivity : AppCompatActivity() {
                     preferences[loggedUserPreferences] = user.id
                 }
                 Log.i("LoginActivity", "onCreate: $user - $password")
-                parseTo(ProductListActivity::class.java)
+                goTo(ProductListActivity::class.java)
                 finish()
             } ?: toast("Falha na autenticação")
         }
@@ -53,7 +53,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun registerButtonConfig() {
         binding.activityLoginRegisterButton.setOnClickListener {
-            parseTo(RegisterUserFormActivity::class.java)
+            goTo(RegisterUserFormActivity::class.java)
         }
     }
 }

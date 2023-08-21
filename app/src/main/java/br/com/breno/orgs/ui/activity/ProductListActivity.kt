@@ -8,28 +8,34 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import br.com.breno.orgs.R
 import br.com.breno.orgs.database.OrgsDatabase
 import br.com.breno.orgs.databinding.ActivityProductListBinding
+import br.com.breno.orgs.extensions.goTo
 import br.com.breno.orgs.model.Product
 import br.com.breno.orgs.ui.recyclerview.adapter.ProductListAdapter
 import br.com.breno.orgs.utils.PRODUCT_KEY_ID
+import br.com.breno.orgs.utils.preferences.dataStore
+import br.com.breno.orgs.utils.preferences.loggedUserPreferences
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-private const val TAG = "ProductList"
-
-class ProductListActivity : AppCompatActivity() {
+class ProductListActivity : BaseUserActivity() {
 
     private val binding by lazy { ActivityProductListBinding.inflate(layoutInflater) }
     private val productDao by lazy { OrgsDatabase.getInstance(this).productDao() }
@@ -41,9 +47,14 @@ class ProductListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         recyclerViewConfig()
         floatingActionButtonConfig()
-        lifecycleScope.launch() {
-            productDao.findAll().collect { allProducts ->
-                adapter.update(allProducts)
+        lifecycleScope.launch {
+            launch {
+                user
+                    .filterNotNull()
+                    .collect {
+                        Log.i("ProductList", "onCreate: $it")
+                        findUserProducts()
+                    }
             }
         }
         setContentView(binding.root)
@@ -81,8 +92,18 @@ class ProductListActivity : AppCompatActivity() {
             orderedProducts?.let { products ->
                 adapter.update(products)
             }
+            when (item.itemId) {
+                R.id.menu_product_list_go_out ->
+                    logOutUser()
+            }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private suspend fun findUserProducts() {
+        productDao.findAll().collect { allProducts ->
+            adapter.update(allProducts)
+        }
     }
 
     private fun floatingActionButtonConfig() {

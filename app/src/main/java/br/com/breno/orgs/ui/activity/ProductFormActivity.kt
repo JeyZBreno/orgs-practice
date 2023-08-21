@@ -1,6 +1,7 @@
 package br.com.breno.orgs.ui.activity
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import br.com.breno.orgs.R
@@ -10,21 +11,21 @@ import br.com.breno.orgs.extensions.tryLoadImage
 import br.com.breno.orgs.model.Product
 import br.com.breno.orgs.ui.dialog.ImageFormDialog
 import br.com.breno.orgs.utils.PRODUCT_KEY_ID
+import br.com.breno.orgs.utils.preferences.dataStore
+import br.com.breno.orgs.utils.preferences.loggedUserPreferences
 import java.math.BigDecimal
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ProductFormActivity : AppCompatActivity(R.layout.activity_product_form) {
+class ProductFormActivity : BaseUserActivity() {
 
     private val binding by lazy { ActivityProductFormBinding.inflate(layoutInflater) }
-    private val productDao by lazy {
-        OrgsDatabase
-            .getInstance(this)
-            .productDao()
-    }
+    private val productDao by lazy { OrgsDatabase.getInstance(this).productDao() }
+    private val userDao by lazy { OrgsDatabase.getInstance(this).userDao() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +35,13 @@ class ProductFormActivity : AppCompatActivity(R.layout.activity_product_form) {
         title = "Cadastrar produto"
         tryLoadProduct()
         findByProduct()
+        lifecycleScope.launch {
+            user
+                .filterNotNull()
+                .collect {
+                    Log.i("ProductForm", "onCreate: $it")
+                }
+        }
     }
 
     private fun findByProduct() {

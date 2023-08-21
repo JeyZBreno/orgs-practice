@@ -31,4 +31,11 @@
                 android:title="Sem ordem" />
         </menu>
     </item>
+
+    <item
+        android:id="@+id/menu_product_list_go_out"
+        android:icon="@drawable/ic_baseline_exit_to_app"
+        android:title="Sair do App"
+        app:showAsAction="ifRoom" >
+    </item>
 </menu>
