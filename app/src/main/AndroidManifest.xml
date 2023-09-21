@@ -17,6 +17,9 @@
             android:name=".ui.activity.UserProfileActivity"
             android:exported="false"
             android:label="Perfil" />
+        <activity android:name=".ui.activity.AllProductsActivity"
+            android:exported="false"
+            android:label="Todos os Produtos" />
         <activity
             android:name=".ui.activity.RegisterUserFormActivity"
             android:label="Cadastrar usuário" />

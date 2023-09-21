@@ -33,9 +33,19 @@
     </item>
 
     <item
-        android:id="@+id/menu_product_list_go_out"
-        android:icon="@drawable/ic_baseline_exit_to_app"
-        android:title="Sair do App"
+        android:id="@+id/menu_product_list_go_to_profile"
+        android:icon="@drawable/ic_baseline_settings"
+        android:title="Configurações"
         app:showAsAction="ifRoom" >
+        <menu>
+            <item
+                android:id="@+id/menu_user_profile"
+                android:title="Perfil do Usuário"
+            />
+            <item
+                android:id="@+id/menu_all_products_by_user"
+                android:title="Todos os Produtos"
+            />
+        </menu>
     </item>
 </menu>

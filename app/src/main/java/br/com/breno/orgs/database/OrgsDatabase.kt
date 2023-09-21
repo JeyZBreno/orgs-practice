@@ -11,7 +11,7 @@ import br.com.breno.orgs.model.Product
 import br.com.breno.orgs.model.User
 import br.com.breno.orgs.utils.Converters
 
-@Database(entities = [Product::class, User::class], version = 1, exportSchema = true)
+@Database(entities = [Product::class, User::class], version = 3, exportSchema = true)
 @TypeConverters(Converters::class)
 abstract class OrgsDatabase : RoomDatabase() {
     abstract fun productDao(): ProductDao
@@ -26,7 +26,10 @@ abstract class OrgsDatabase : RoomDatabase() {
                 context = context,
                 klass = OrgsDatabase::class.java,
                 name = "orgs.db"
-            ).addMigrations(MIGRATION_1_2)
+            ).addMigrations(
+                MIGRATION_1_2,
+                MIGRATION_2_3,
+                )
                 .build()
                 .also {
                     db = it

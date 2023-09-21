@@ -51,9 +51,9 @@ class ProductListActivity : BaseUserActivity() {
             launch {
                 user
                     .filterNotNull()
-                    .collect {
-                        Log.i("ProductList", "onCreate: $it")
-                        findUserProducts()
+                    .collect { user ->
+                        Log.i("ProductList", "onCreate: $user")
+                        findUserProducts(user.id)
                     }
             }
         }
@@ -93,15 +93,17 @@ class ProductListActivity : BaseUserActivity() {
                 adapter.update(products)
             }
             when (item.itemId) {
-                R.id.menu_product_list_go_out ->
-                    logOutUser()
+                R.id.menu_user_profile ->
+                    navigateToUserProfile()
+                R.id.menu_all_products_by_user ->
+                    goTo(AllProductsActivity::class.java)
             }
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private suspend fun findUserProducts() {
-        productDao.findAll().collect { allProducts ->
+    private suspend fun findUserProducts(userId: String) {
+        productDao.findAllByUser(userId).collect { allProducts ->
             adapter.update(allProducts)
         }
     }
@@ -116,6 +118,11 @@ class ProductListActivity : BaseUserActivity() {
     private fun navigateToProductForm() {
         val intent = Intent(this, ProductFormActivity::class.java)
         startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
+    }
+
+    private fun navigateToUserProfile() {
+        val intent = Intent(this, UserProfileActivity::class.java)
+        startActivity(intent,ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
     }
 
     private fun recyclerViewConfig() {

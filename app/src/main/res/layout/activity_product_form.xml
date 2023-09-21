@@ -31,7 +31,7 @@
             android:layout_margin="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/chosenImage"
+            app:layout_constraintTop_toBottomOf="@+id/userId"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -92,6 +92,18 @@
             app:layout_constraintEnd_toEndOf="@id/inputLayoutValue"
             app:layout_constraintStart_toStartOf="@+id/inputLayoutValue"
             app:layout_constraintBottom_toBottomOf="parent" />
+
+        <AutoCompleteTextView
+            android:id="@+id/userId"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/chosenImage"
+            tools:text="usuarioId"
+            tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

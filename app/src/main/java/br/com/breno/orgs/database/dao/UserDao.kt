@@ -24,4 +24,7 @@ interface UserDao {
 
     @Query("SELECT * FROM user Where id = :id")
     fun findById(id: String): Flow<User>
+
+    @Query("SELECT * FROM User")
+    fun findAll(): Flow<List<User>>
 }

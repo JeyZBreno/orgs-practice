@@ -14,5 +14,10 @@ data class Product(
     val name: String,
     val description: String,
     val value: BigDecimal,
-) : Parcelable
+    val userId: String? = null,
+) : Parcelable {
+
+    fun saveWithoutUser() = userId.isNullOrBlank() && id > 0L
+
+}
 

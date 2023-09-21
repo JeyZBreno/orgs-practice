@@ -21,8 +21,8 @@ abstract class BaseUserActivity : AppCompatActivity() {
         OrgsDatabase.getInstance(this).userDao()
     }
 
-    private var _user: MutableStateFlow<User?> = MutableStateFlow(null)
-    protected var user: StateFlow<User?> = _user
+    private val _user: MutableStateFlow<User?> = MutableStateFlow(null)
+    protected val user: StateFlow<User?> = _user
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,17 +32,19 @@ abstract class BaseUserActivity : AppCompatActivity() {
     }
 
     private suspend fun verifyLoggedUser() {
-        dataStore.data.collect {prefecences ->
-            prefecences[loggedUserPreferences]?.let {userId ->
+        dataStore.data.collect {preferences ->
+            preferences[loggedUserPreferences]?.let {userId ->
                 findUser(userId)
             } ?: gotToLogin()
         }
     }
 
-    private suspend fun findUser(userId: String) {
-        _user.value = userDao
+    private suspend fun findUser(userId: String) : User? {
+        return userDao
             .findById(userId)
-            .firstOrNull()
+            .firstOrNull().also { user ->
+                _user.value = user
+            }
     }
 
     protected suspend fun logOutUser() {
@@ -57,4 +59,6 @@ abstract class BaseUserActivity : AppCompatActivity() {
         }
         finish()
     }
+
+    protected fun users() = userDao.findAll()
 }
