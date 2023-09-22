@@ -110,7 +110,7 @@ class ProductFormActivity : BaseUserActivity() {
         val saveButton = binding.saveButton
         saveButton.setOnClickListener {
             lifecycleScope.launch {
-
+                tryToSaveProduct()
             }
         }
     }
